@@ -1,9 +1,51 @@
 {
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
-  "version": 1, 
+  "version": 1,
   "cli": {
-    "packageManager": "yarn"
+    "packageManager": "yarn",
+    "analytics": "664435d1-eb14-43fd-a8df-0fccc8d38892"
   },
   "newProjectRoot": "projects",
-  "projects": {}
+  "projects": {
+    "@ng-gear/permission": {
+      "projectType": "library",
+      "root": "projects/permission",
+      "sourceRoot": "projects/permission/src",
+      "prefix": "ngg",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-ng-packagr:build",
+          "options": {
+            "tsConfig": "projects/permission/tsconfig.lib.json",
+            "project": "projects/permission/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/permission/tsconfig.lib.prod.json"
+            }
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/permission/src/test.ts",
+            "tsConfig": "projects/permission/tsconfig.spec.json",
+            "karmaConfig": "projects/permission/karma.conf.js"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "projects/permission/tsconfig.lib.json",
+              "projects/permission/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        }
+      }
+    }},
+  "defaultProject": "@ng-gear/permission"
 }
