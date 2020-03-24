@@ -19,10 +19,9 @@ export class NggPermissionService {
     return permissions.some((p) => this.permissions.includes(p));
   }
 
-  initializePermissions(): Promise<unknown> {
-    return fromAsyncResponse(this.permissionStrategy.getInitialPermissions())
-      .toPromise()
-      .then((permissions) => this.permissions = permissions ?? []);
+  async initializePermissions(): Promise<void> {
+    const permissions = await fromAsyncResponse(this.permissionStrategy.getInitialPermissions()).toPromise();
+    this.permissions = permissions ?? [];
   }
 
   updatePermissions(permissions: string[] | null) {

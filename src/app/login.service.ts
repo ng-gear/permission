@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { BehaviorSubject } from 'rxjs';
-import { delay, subscribeOn } from 'rxjs/operators';
+import { delay } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -9,9 +9,7 @@ import { delay, subscribeOn } from 'rxjs/operators';
 export class LoginService {
   private readonly loginSubject = new BehaviorSubject<any | null>(null);
 
-  readonly loggedInChange = this.loginSubject.pipe(
-    delay(300)
-  );
+  readonly loggedInChange = this.loginSubject.pipe(delay(300));
 
   loginUser1(): void {
     this.loginSubject.next({

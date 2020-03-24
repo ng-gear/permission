@@ -1,8 +1,5 @@
 import { Directive, DoCheck, Input, OnChanges, SimpleChanges, TemplateRef, ViewContainerRef } from '@angular/core';
 
-import { asapScheduler } from 'rxjs';
-import { subscribeOn } from 'rxjs/operators';
-
 import { NggPermissionService } from './permission.service';
 
 @Directive({
