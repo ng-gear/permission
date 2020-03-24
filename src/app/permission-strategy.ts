@@ -1,29 +1,37 @@
-import { timer, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { map, skip, take } from 'rxjs/operators';
 
 import { NggPermissionStrategy } from '../../projects/permission/src/lib/permission-strategy';
+import { NggPermissionService } from '../../projects/permission/src/lib/permission.service';
+import { LoginService } from './login.service';
 
 export class PermissionStrategy implements NggPermissionStrategy {
-  getPermissions(): Promise<string[]> | Observable<string[]> | string[] {
-    return timer(700).pipe(
-      map(() => [
-        'view.learn-angular',
-        'view.cli-docs',
-        'view.angular-blog',
-        'view.generate-component',
-        'view.add-angular-material',
-        'view.add-pwa',
-        'view.add-dependency',
-        'view.run-and-watch-tests',
-        'view.build-prod',
-        'view.angular-animations',
-        'view.cli-angular-com',
-        'view.angury',
-        'view.angular-e2e',
-        'view.find-a-local-meet',
-        'view.gitter',
-        'view.angular-repo'
-      ])
+  private readonly loginService: LoginService;
+  private permissionService: NggPermissionService;
+
+  constructor(loginService: LoginService) {
+    this.loginService = loginService;
+
+    this.handleLoggedInChange();
+  }
+
+  attach(permissionService: NggPermissionService): void {
+    this.permissionService = permissionService;
+  }
+
+  getInitialPermissions(): Promise<string[]> | Observable<string[]> | string[] {
+    return this.loginService.loggedInChange.pipe(
+      take(1),
+      map((user) => user?.permissions)
+    );
+  }
+
+  handleLoggedInChange(): void {
+    this.loginService.loggedInChange.pipe(
+      skip(1),
+      map((user) => user?.permissions)
+    ).subscribe(
+      (permissions) => this.permissionService.updatePermissions(permissions)
     );
   }
 }

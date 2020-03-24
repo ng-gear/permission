@@ -10,6 +10,8 @@ export class NggPermissionService {
 
   constructor(@Inject(NGG_PERMISSION_STRATEGY) permissionStrategy: NggPermissionStrategy) {
     this.permissionStrategy = permissionStrategy;
+
+    permissionStrategy.attach(this);
   }
 
   hasPermission(permission: string | string[]): boolean {
@@ -18,8 +20,12 @@ export class NggPermissionService {
   }
 
   initializePermissions(): Promise<unknown> {
-    return fromAsyncResponse(this.permissionStrategy.getPermissions())
+    return fromAsyncResponse(this.permissionStrategy.getInitialPermissions())
       .toPromise()
-      .then((permissions) => this.permissions = permissions);
+      .then((permissions) => this.permissions = permissions ?? []);
+  }
+
+  updatePermissions(permissions: string[] | null) {
+    this.permissions = permissions ?? [];
   }
 }
