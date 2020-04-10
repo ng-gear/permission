@@ -3,9 +3,9 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { NggPermissionService } from './permission.service';
 
 @Pipe({
-  name: 'hasPermission'
+  name: 'nggHasPermission'
 })
-export class HasPermissionPipe implements PipeTransform {
+export class NggHasPermissionPipe implements PipeTransform {
   private readonly permissionService: NggPermissionService;
 
   constructor(permissionService: NggPermissionService) {

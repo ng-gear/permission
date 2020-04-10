@@ -1,11 +1,11 @@
-import { Directive, DoCheck, Input, OnChanges, SimpleChanges, TemplateRef, ViewContainerRef } from '@angular/core';
+import { Directive, Input, OnChanges, SimpleChanges, TemplateRef, ViewContainerRef } from '@angular/core';
 
 import { NggPermissionService } from './permission.service';
 
 @Directive({
   selector: '[nggHasPermissionExcept]'
 })
-export class NggHasPermissionExceptDirective implements OnChanges, DoCheck {
+export class NggHasPermissionExceptDirective implements OnChanges {
   private readonly permissionService: NggPermissionService;
   private readonly viewContainerRef: ViewContainerRef;
   private readonly templateRef: TemplateRef<void>;
@@ -26,11 +26,8 @@ export class NggHasPermissionExceptDirective implements OnChanges, DoCheck {
     }
 
     this.hasPermission = this.permissionService.hasPermission(this.permission);
-  }
 
-  ngDoCheck(): void {
     this.viewContainerRef.clear();
-
     if (!this.hasPermission) {
       this.viewContainerRef.createEmbeddedView(this.templateRef);
     } else if (this.elseTemplate) {

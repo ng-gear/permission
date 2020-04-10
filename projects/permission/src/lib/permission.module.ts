@@ -2,19 +2,20 @@ import { APP_INITIALIZER, ModuleWithProviders, NgModule } from '@angular/core';
 
 import { NggHasPermissionExceptDirective } from './has-permission-except.directive';
 import { NggHasPermissionDirective } from './has-permission.directive';
-import { HasPermissionPipe } from './has-permission.pipe';
+import { NggHasPermissionPipe } from './has-permission.pipe';
+import { NggPermissionGuard } from './permission.guard';
 import { NggPermissionService } from './permission.service';
 
 @NgModule({
   declarations: [
     NggHasPermissionDirective,
     NggHasPermissionExceptDirective,
-    HasPermissionPipe
+    NggHasPermissionPipe
   ],
   exports: [
     NggHasPermissionDirective,
     NggHasPermissionExceptDirective,
-    HasPermissionPipe
+    NggHasPermissionPipe
   ]
 })
 export class NggPermissionModule {
@@ -23,6 +24,7 @@ export class NggPermissionModule {
       ngModule: NggPermissionModule,
       providers: [
         NggPermissionService,
+        NggPermissionGuard,
         {
           provide: APP_INITIALIZER,
           useFactory(permissionService: NggPermissionService) {

@@ -1,14 +1,11 @@
-import { Directive, DoCheck, Input, OnChanges, SimpleChanges, TemplateRef, ViewContainerRef } from '@angular/core';
-
-import { asapScheduler } from 'rxjs';
-import { subscribeOn } from 'rxjs/operators';
+import { Directive, Input, OnChanges, SimpleChanges, TemplateRef, ViewContainerRef } from '@angular/core';
 
 import { NggPermissionService } from './permission.service';
 
 @Directive({
   selector: '[nggHasPermission]'
 })
-export class NggHasPermissionDirective implements OnChanges, DoCheck {
+export class NggHasPermissionDirective implements OnChanges {
   private readonly permissionService: NggPermissionService;
   private readonly viewContainerRef: ViewContainerRef;
   private readonly templateRef: TemplateRef<void>;
@@ -29,11 +26,8 @@ export class NggHasPermissionDirective implements OnChanges, DoCheck {
     }
 
     this.hasPermission = this.permissionService.hasPermission(this.permission);
-  }
 
-  ngDoCheck(): void {
     this.viewContainerRef.clear();
-
     if (this.hasPermission) {
       this.viewContainerRef.createEmbeddedView(this.templateRef);
     } else if (this.elseTemplate) {

@@ -7,7 +7,7 @@ import { NggPermissionService } from './permission.service';
 
 export interface NggPermissionGuardConfig {
   has?: string | string[];
-  except: string | string[];
+  except?: string | string[];
   redirectTo?: string | string[];
 }
 
@@ -45,7 +45,7 @@ export class NggPermissionGuard implements CanActivate, CanActivateChild, CanLoa
 
     const redirectTo = Array.isArray(config.redirectTo) ? config.redirectTo : [config.redirectTo];
 
-    if (canNavigate && config.redirectTo) {
+    if (!canNavigate && config.redirectTo) {
       this.router.navigate(redirectTo);
     }
 
