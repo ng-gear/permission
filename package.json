@@ -1,6 +1,6 @@
 {
   "name": "permission",
-  "version": "0.0.5",
+  "version": "0.0.8",
   "scripts": {
     "ng": "ng",
     "serve": "ng serve permission-test",

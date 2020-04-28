@@ -3,6 +3,9 @@ import {
   ActivatedRouteSnapshot, CanActivate, CanActivateChild, CanLoad, Route, Router, RouterStateSnapshot, UrlSegment
 } from '@angular/router';
 
+import { combineLatest, of, Observable } from 'rxjs';
+import { map, take, tap } from 'rxjs/operators';
+
 import { NggPermissionService } from './permission.service';
 
 export interface NggPermissionGuardConfig {
@@ -25,30 +28,29 @@ export class NggPermissionGuard implements CanActivate, CanActivateChild, CanLoa
     this.router = router;
   }
 
-  canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
+  canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> | boolean {
     return !!next.routeConfig && this.hasPermissionToNavigate(next.routeConfig);
   }
 
-  canActivateChild(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
+  canActivateChild(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> | boolean {
     return !!next.routeConfig && this.hasPermissionToNavigate(next.routeConfig);
   }
 
-  canLoad(route: Route, segments: UrlSegment[]): boolean {
+  canLoad(route: Route, segments: UrlSegment[]): Observable<boolean> {
     return this.hasPermissionToNavigate(route);
   }
 
-  private hasPermissionToNavigate(route: Route): boolean {
+  private hasPermissionToNavigate(route: Route): Observable<boolean> {
     const config = getPermissionConfig(route);
-    const has = config.has && this.permissionService.hasPermission(config.has);
-    const except = config.except && this.permissionService.hasPermission(config.except);
-    const canNavigate = !!has && !except;
-
     const redirectTo = Array.isArray(config.redirectTo) ? config.redirectTo : [config.redirectTo];
 
-    if (!canNavigate && config.redirectTo) {
-      this.router.navigate(redirectTo);
-    }
-
-    return canNavigate;
+    return combineLatest([
+      config.has ? this.permissionService.hasPermissionAsync(config.has) : of(true),
+      config.except ? this.permissionService.hasPermissionAsync(config.except) : of(false)
+    ]).pipe(
+      take(1),
+      map(([has, except]) => has && !except),
+      tap((canNavigate) => !canNavigate && config.redirectTo && this.router.navigate(redirectTo))
+    );
   }
 }
